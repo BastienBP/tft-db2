@@ -1,7 +1,17 @@
-# tft-db2
+graphdb in Docker
+===
 
-##Build image: 
-run: 
+Run
+---
+
+```bash
+docker run -it --privileged --name grapphdb -p 80:80 -d esgi/graphdb:latest
 ```
-docker pull ibmcom/db2express-c
+
+Build
+---
+
+```bash
+docker build --rm --no-cache -t esgi/graphdb
 ```
+

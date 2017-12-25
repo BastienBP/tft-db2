@@ -1,0 +1,14 @@
+[Unit]
+Description=Graphdb server daemon
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/start-graphdb.sh
+ExecReload=pkill -9 -f graphdb.server || true
+ExecStop=pkill -9 -f graphdb.server || true
+
+[Install]
+WantedBy=multi-user.target
