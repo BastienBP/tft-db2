@@ -1,0 +1,52 @@
+sudo: required
+
+language: php
+php:
+  - '7.1'
+
+notifications:
+  email:
+    recipients:
+      - karima.rafes@gmail.com
+    on_success: always # default: change (other : never)
+    on_failure: always # default: always
+
+env:
+  global:
+    - URI="https://travis-ci.org/BorderCloud/tft-jena-fuseki/builds/$((TRAVIS_JOB_ID - 1))"
+    - NAME="Jena Fuseki"
+    - SOFTWARE_DESCRIBE="Jena Fuseki"
+    - VERSION="3.4.0"
+    - SPARQLSCORE_DATABASE="localhost:8080/rdf4j-server/repositories"
+#    - SPARQLSCORE_DATABASE="172.17.0.6" #local
+
+services:
+  - docker
+
+before_install:
+  - docker pull bordercloud/tft-jena-fuseki
+  - docker build --rm --no-cache -t esgi/graphdb .
+
+#  - docker pull bordercloud/tft-jena-fuseki
+
+script:
+# Deploy TFT
+# Run RDF database in order to save tests and results
+  -   docker run --privileged --name graphdb -p 80:80 -d esgi/graphdb:latest
+
+
+##  -   docker run --privileged --name instance.tft_database -d tft-jena-fuseki
+
+## Run quick test
+#  -   docker run --privileged --name instance.jena-fuseki -h tft-jena-fuseki -d bordercloud/tft-jena-fuseki
+#  -   docker run --privileged --name instance.tft.example.org -h example.org -d bordercloud/tft-virtuoso7-stable
+#  -   docker run --privileged --name instance.tft.example1.org -h example1.org -d bordercloud/tft-virtuoso7-stable
+#  -   docker run --privileged --name instance.tft.example2.org -h example2.org -d bordercloud/tft-virtuoso7-stable
+#  -   docker run --privileged --name instance.tft_database -d bordercloud/tft-jena-fuseki
+
+  -   git clone --recursive https://github.com/BorderCloud/TFT.git
+  -   cd TFT
+  -   composer install --dev
+  -   php ./tft-testsuite -a  -q 'http://localhost/repositories/web-semantique' -u 'http://localhost/repositories/web-semantique/statements'
+  -   php ./tft -q 'http://localhost/repositories/web-semantique' -u 'http://localhost/repositories/web-semantique/statements' -tq http://localhost/repositories/web-semantique -tu http://localhost/repositories/web-semantique/statements -o ./junit -r https://marketplace.stratuslab.eu/marketplace/metadata/MvJPyzt00KDfRS-vM5gUEfhlr-R --softwareName="graphdb free"  --softwareDescribeTag=v8.4.0  --softwareDescribe=8.4.0
+  -   php ./tft-score -t virtuoso -q 'http://localhost/repositories/web-semantique' -u 'http://localhost/repositories/web-semantique/statements' -r https://marketplace.stratuslab.eu/marketplace/metadata/MvJPyzt00KDfRS-vM5gUEfhlr-R	  

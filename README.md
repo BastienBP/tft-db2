@@ -5,13 +5,13 @@ Run
 ---
 
 ```bash
-docker run -it --privileged --name grapphdb -p 80:80 -d esgi/graphdb:latest
+docker run -it --privileged --name grapphdb -p 80:80  esgi/graphdb:latest
 ```
 
 Build
 ---
 
 ```bash
-docker build --rm --no-cache -t esgi/graphdb
+docker build --rm --no-cache -t esgi/graphdb .
 ```
 
